@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Data;
-using System.Configuration;
-using System.Security;
-using System.EnterpriseServices;
-using System.IO;
-using Mono.Data.Sqlite;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace FinanceProgram.Framework
@@ -15,37 +7,41 @@ namespace FinanceProgram.Framework
     [System.Serializable]
     public class SystemDataBase : MonoBehaviour
     {
-        public string login;
-        public string password;
+        
+        public DataBaseHandler Handler{get; set;}
+        
+        
+        private string clientId; 
+        private string login;
+        private string password; 
+        
+        [SerializeField] private InputField input_ClientId;
+        [SerializeField] private InputField input_Login;
+        [SerializeField] private InputField input_Password;
+
+        [SerializeField] private Text label_ClientId;
+        [SerializeField] private Text label_Login;
+        [SerializeField] private Text label_Password;
+
+
         public Text status;
         
-        public static DataBase dataBase = new DataBase();
-
         private void Awake()
         {
-            status.text = "Connection is absent!";
+            status.text = "no connections...";
+            Handler = new DataBaseHandler();
 
         }
 
-        public void Connect()
+        private void Read()
         {
-            string state;
-            dataBase.OnConnect(out state);
-            status.text = state;
-        }
-                
-        
-        public void Request()
-        {
-            var request = "Select * from Users";
-            dataBase.OnCommand(request);
+            Handler.OnRead();
 
         }
 
-        public void Read(SqliteCommand command)
+        private void Write()
         {
-            var request = "Select * from Users";
-            dataBase.OnCommand(request);
+            Handler.OnWrite();
 
         }
 
@@ -53,58 +49,4 @@ namespace FinanceProgram.Framework
 
     }
 
-    //TODO: Reclass DataBaseConnection
-    public class DataBase
-    {
-        public SqliteConnection Connection {get; private set;}
-        private string path;
-        
-        private SqliteCommand command;
-        private SqliteDataReader reader;
-        
-        public bool OnConnect(out string status) 
-        {
-            
-            status = "Connection is absent!";
-            
-            try
-            {
-                path = Application.dataPath + "/Source/DataBase/financeprogramdb.bytes";
-                Connection = new SqliteConnection("URI=file:" + path );
-                Connection.Open();
-
-                if(Connection.State == ConnectionState.Open)
-                    status = path.ToString() + "has been connected!";
-
-                
-                return true;
-            }
-            catch(Exception exeption)
-            {
-
-                status = exeption.ToString();
-                return false;
-            }
-        
-        }  
-
-        public bool OnCommand(string request)
-        {
-            try
-            {
-                command = new SqliteCommand(request, Connection);      
-                return true;
-            }
-            catch(Exception exeption)
-            {
-                Debug.Log(exeption.ToString());
-                return false;
-            }
-
-
-        }
- 
-
-
-    }
 }
