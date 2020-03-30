@@ -1,79 +1,33 @@
-using UnityEngine;
-
 namespace FinanceProgram.Framework
 {      
     public class DataBaseHandler
     {
-        private string request; 
-        private string status; 
-
-        private static readonly string CONNECTING_STATE_FAILED = "connection was failed...";
-        private static readonly string CONNECTING_STATE_CONNECTION_WAS_OPENED = "connection was opened!";
-        private static readonly string CONNECTING_STATE_CONNECTION_WAS_CLOSED = "connection was closed!";
+        private Query request; 
+        private DataStruct data;
         
-        
-        
-        public void OnRead()
+        public DataStruct ReadClientData()
         {
-
-            Connect(out status);
-
-            Command();
-
-
+            var data = new DataStruct();
+            var query = new Query("Select * From Users");
             
-            
-            
-            Disconnect(out status);
 
+            DataBase.Read(query, out data);
+            
+            return data;
+            
 
         }
 
-        public void OnWrite()
+
+        public void AddClient()
         {
 
-            Connect(out status);
-            Command();
+            var query = new Query("INSERT INTO Users(ID, Login, Password) values ('" +  data.ClientID + "', '" +  data.Login +"', '" +  data.Password +"')");
+            DataBase.Write(query);
   
 
-            Disconnect(out status);
-
-
         }
-
-        
     
-        
-        private void Connect(out string state)
-        {
-            if(DataBase.OnConnect())
-                state = CONNECTING_STATE_CONNECTION_WAS_OPENED;
-
-            state = CONNECTING_STATE_FAILED;
-
-        }
-        
-
-        private void Disconnect(out string state)
-        {
-
-            if(DataBase.OnDisconnect())
-                state = CONNECTING_STATE_CONNECTION_WAS_OPENED;
-
-            state = CONNECTING_STATE_CONNECTION_WAS_CLOSED;
-
-        }
-
-
-        private void Command()
-        {  
-            DataBase.OnCommand(request);
-
-
-        }
-        
-
-        
 
 
     }

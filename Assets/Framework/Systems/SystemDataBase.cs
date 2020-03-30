@@ -33,15 +33,15 @@ namespace FinanceProgram.Framework
 
         }
 
-        private void Read()
+        public void Read()
         {
-            Handler.OnRead();
+            Handler.ReadClientData();
 
         }
 
-        private void Write()
+        public void Write()
         {
-            Handler.OnWrite();
+            Handler.AddClient();
 
         }
 
