@@ -21,19 +21,14 @@ namespace FinanceProgram.Framework
     public static class DataBase
     {
         
- 
-        
-        
-        
         public static SqliteConnection Connection {get; private set;}
         public static string Status {get; private set;}
 
-        private static readonly string DATABASE_PATH_FOLDER = "/Source/SQLDataBase/financeprogramdb.bytes";
+        private static readonly string DATABASE_PATH_FOLDER = "/Source/DataBase/financeprogramdb.bytes";
         
         private static SqliteCommand command;
         private static SqliteDataReader reader;
          
-
 
         private static readonly string CONNECTING_STATE_FAILED = "connection was failed...";
         private static readonly string CONNECTING_STATE_CONNECTION_WAS_OPENED = "connection was opened!";
@@ -41,7 +36,7 @@ namespace FinanceProgram.Framework
         
 
         
-        private static bool Connect() 
+        public static bool Connect(out string state) 
         {
             try
             {
@@ -52,34 +47,34 @@ namespace FinanceProgram.Framework
 
                 if(Connection.State == ConnectionState.Open) 
                 {
-                    SetStatus(CONNECTING_STATE_CONNECTION_WAS_OPENED);
+                    state = SetStatus(CONNECTING_STATE_CONNECTION_WAS_OPENED);
                     return true;
                     
 
                 }
 
-                SetStatus(CONNECTING_STATE_FAILED);
+                state = SetStatus(CONNECTING_STATE_FAILED);
                 return false;
             }
             catch(Exception exeption)
             {
-                SetStatus(CONNECTING_STATE_FAILED);
+                state = SetStatus(CONNECTING_STATE_FAILED);
                 Debug.LogWarning(exeption.ToString());
                 return false;
             }
         } 
 
-        private static bool Disconnect() 
+        public static bool Disconnect(out string state) 
         {
             try
             {
                 Connection.Close();
-                SetStatus(CONNECTING_STATE_CONNECTION_WAS_CLOSED);
+                state = SetStatus(CONNECTING_STATE_CONNECTION_WAS_CLOSED);
                 return true;
             }
             catch(Exception exeption)
             {
-                SetStatus(CONNECTING_STATE_FAILED);
+                state = SetStatus(CONNECTING_STATE_FAILED);
                 Debug.LogWarning(exeption.ToString());
                 return false;
             }
@@ -87,13 +82,13 @@ namespace FinanceProgram.Framework
         }  
 
 
-        public static bool Read(Query query, out DataStruct data)
+        public static bool Read(Query query, out DataStruct data, out string state)
         {
             data = new DataStruct();
             
             try
             {
-                Connect();
+                Connect(out state);
                 command = new SqliteCommand(query.Request, Connection);  
 
                 reader = command.ExecuteReader();
@@ -105,7 +100,7 @@ namespace FinanceProgram.Framework
 
                 }
 
-                Disconnect();
+                Disconnect(out state);
                 return true;
 
             }
@@ -113,24 +108,24 @@ namespace FinanceProgram.Framework
             {
                 Debug.Log(exeption.ToString());
 
-                Disconnect();
+                Disconnect(out state);
                 return false;
             }
 
 
         }
 
-        public static bool Write(Query query)
+        public static bool Write(Query query, out string state)
         {
 
             
             try
             {
                 
-                Connect();
+                Connect(out state);
                 command = new SqliteCommand(query.Request, Connection);  
                 command.ExecuteNonQuery();
-                Disconnect();
+                Disconnect(out state);
                 return true;
 
             }
@@ -138,17 +133,17 @@ namespace FinanceProgram.Framework
             {
                 Debug.Log(exeption.ToString());
 
-                Disconnect();
+                Disconnect(out state);
                 return false;
             }
 
 
         }
  
-        public static void SetStatus(string status)
+        public static string SetStatus(string status)
         {
             Status = status;
-
+            return status;
         }
 
     }

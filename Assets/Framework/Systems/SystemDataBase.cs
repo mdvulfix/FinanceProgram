@@ -25,6 +25,7 @@ namespace FinanceProgram.Framework
 
 
         public Text status;
+        private string _state;
         
         private void Awake()
         {
@@ -32,16 +33,25 @@ namespace FinanceProgram.Framework
             Handler = new DataBaseHandler();
 
         }
+        
+        public void Connect()
+        {
+            
+            Handler.Connect(out _state);
+            status.text = _state;
+        }
 
         public void Read()
         {
-            Handler.ReadClientData();
+            Handler.ReadClientData(out _state);
+            status.text = _state;
 
         }
 
         public void Write()
         {
-            Handler.AddClient();
+            Handler.AddClient(out _state);
+            status.text = _state;
 
         }
 
