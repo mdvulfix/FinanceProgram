@@ -30,13 +30,20 @@ namespace FinanceProgram.Framework
         private void Awake()
         {
             status.text = "no connections...";
-            Handler = new DataBaseHandler();
 
+
+        }
+
+        private void Start()
+        {
+            
+            Handler = new DataBaseHandler();
         }
         
         public void Connect()
         {
             
+            DataBase.LogOnStart();
             Handler.Connect(out _state);
             status.text = _state;
         }

@@ -33,11 +33,10 @@ namespace FinanceProgram.Framework
 
         public void AddClient(out string state)
         {
-
-            var query = new Query("INSERT INTO Users(ID, Login, Password) values ('" +  data.ClientID + "', '" +  data.Login +"', '" +  data.Password +"')");
+            var _message = "INSERT INTO Users (ID, Login, Password) VALUES ('" +  data.ClientID + "', '" +  data.Login +"', '" +  data.Password +"');";
+            var query = new Query(_message);
             DataBase.Write(query, out state);
   
-
         }
     
 

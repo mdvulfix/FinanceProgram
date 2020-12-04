@@ -146,6 +146,11 @@ namespace FinanceProgram.Framework
             return status;
         }
 
+        public static void LogOnStart()
+        {
+            Debug.Log("OnStart");
+        }
+
     }
         
 }
